@@ -38,6 +38,9 @@ const App = () => {
                     <Route path="/users">
                         <UserList />
                     </Route>
+                    <Route path="/">
+                        <UserList />
+                    </Route>
                 </Switch>
             </div>
         </Router>
