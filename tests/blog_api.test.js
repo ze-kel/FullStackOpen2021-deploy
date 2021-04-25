@@ -173,6 +173,7 @@ describe('DELETING AND MODIFYING', () => {
     })
 })
 
-afterAll(() => {
+afterAll((done) => {
     mongoose.connection.close()
+    done()
 })

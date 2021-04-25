@@ -1,0 +1,36 @@
+name: Deployment pipeline
+
+on:
+    push:
+        branches:
+            - master
+    pull_request:
+        branches:
+            - master
+        types: [opened, synchronize]
+
+jobs:
+    deploy:
+        runs-on: ubuntu-18.04
+        env:
+            PORT: 4000
+            MONGODB_URI: ${{secrets.MONGODB_URI}}
+            SECRET: ${{secrets.SECRET}}
+            TEST_MONGODB_URI: ${{secrets.TEST_MONGODB_URI}}
+        steps:
+            - uses: actions/checkout@v2
+            - uses: actions/setup-node@v1
+              with:
+                  node-version: '14.x'
+            - name: npm install
+              run: npm install
+            - name: lint
+              run: npm run test
+            - name: build
+              run: npm run build
+            - uses: akhileshns/heroku-deploy@v3.12.12
+              if: ${{ github.event_name == 'push' && !contains(join(toJson(github.event.commits.*.message)), '#skip') }}
+              with:
+                  heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+                  heroku_app_name: 'kirill-fullstack-p7-deploy'
+                  heroku_email: 'k.kelolov@gmail.com'

@@ -30,10 +30,14 @@ mongoose
 
 app.use(cors())
 app.use(express.json())
-//app.use(middleware.requestLogger)
+app.use(middleware.requestLogger)
 app.use(middleware.tokenExtractor)
-app.use('/api/blogs', middleware.userExtractor, blogRouter)
 
+app.get('/health', (req, res) => {
+    res.send('ok')
+})
+
+app.use('/api/blogs', middleware.userExtractor, blogRouter)
 app.use('/api/blogs', blogRouter)
 app.use('/api/users', usersRouter)
 app.use('/api/login', loginRouter)
@@ -53,6 +57,7 @@ if (
     !process.env.NODE_ENV === 'production' ||
     !process.env.NODE_ENV === 'test'
 ) {
+    console.log('Starting hot reload mode')
     const webpack = require('webpack')
     const middleware = require('webpack-dev-middleware')
     const hotMiddleWare = require('webpack-hot-middleware')
@@ -78,7 +83,7 @@ if (
         })
     })
 } else {
-    console.log('staring production mode')
+    console.log('Starting static mode')
     const DIST_PATH = path.resolve(__dirname, './dist')
     const INDEX_PATH = path.resolve(DIST_PATH, 'index.html')
 
