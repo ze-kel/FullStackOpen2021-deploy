@@ -16,6 +16,7 @@ import {
 import UserList from './components/UserList'
 import Blog from './components/Blog'
 import User from './components/User'
+import 'tailwindcss/tailwind.css'
 
 const App = () => {
     const dispatch = useDispatch()
