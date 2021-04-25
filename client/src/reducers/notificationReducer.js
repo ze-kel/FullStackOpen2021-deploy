@@ -3,7 +3,6 @@ let cancelTimer
 
 export const setNotification = (text) => {
     return async (dispatch) => {
-        console.log('setting notification')
         dispatch({
             type: 'SET_NOTIF',
             notification: text,

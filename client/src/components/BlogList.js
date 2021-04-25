@@ -17,10 +17,17 @@ const BlogList = (props) => {
             </Togglable>
             <div className={Style.ClickableListContaier}>
                 {props.blogs.map((blog) => {
-                    console.log(blog)
                     return (
-                        <Link className={Style.ClickableListItem + ' flex justify-between'} key={blog.id} to={'/blogs/' + blog.id}>
-                            <p className="inline-flex">{blog.title}</p> <p className="inline-flex">{blog.likes} likes</p>
+                        <Link
+                            className={
+                                Style.ClickableListItem +
+                                ' flex justify-between'
+                            }
+                            key={blog.id}
+                            to={'/blogs/' + blog.id}
+                        >
+                            <p className="inline-flex">{blog.title}</p>{' '}
+                            <p className="inline-flex">{blog.likes} likes</p>
                         </Link>
                     )
                 })}

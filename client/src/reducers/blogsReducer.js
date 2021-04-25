@@ -26,7 +26,6 @@ export const addComment = (blog, comment) => {
 export const addBlog = (blog) => {
     return async (dispatch) => {
         const newBlog = await blogService.create(blog)
-        console.log('CREATING NEW BLOG', newBlog)
         dispatch({
             type: 'ADD_BLOG',
             blog: newBlog,
@@ -57,7 +56,9 @@ export const initBlogs = () => {
 const blogsReducer = (state = [], action) => {
     switch (action.type) {
         case 'UPDATE_BLOG':
-            return state.map((blog) => (blog.id === action.updatedBlog.id ? action.updatedBlog : blog))
+            return state.map((blog) =>
+                blog.id === action.updatedBlog.id ? action.updatedBlog : blog
+            )
         case 'ADD_BLOG':
             return [...state, action.blog]
         case 'INIT_BLOGS':
