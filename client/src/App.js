@@ -7,7 +7,12 @@ import { initUser } from './reducers/userReducer'
 import { initBlogs } from './reducers/blogsReducer'
 import { initUserlist } from './reducers/userListReducer'
 import Menu from './components/Menu'
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Redirect,
+} from 'react-router-dom'
 import UserList from './components/UserList'
 import Blog from './components/Blog'
 import User from './components/User'
@@ -39,7 +44,7 @@ const App = () => {
                         <UserList />
                     </Route>
                     <Route path="/">
-                        <UserList />
+                        <Redirect to="/blogs" />
                     </Route>
                 </Switch>
             </div>

@@ -12,22 +12,24 @@ let auth_TOKEN
 beforeEach(async () => {
     await Blog.deleteMany({})
 
-    const blogObjects = helper.initialBlogs.map(blog => new Blog(blog))
-    const promises = blogObjects.map(blog => blog.save())
+    const blogObjects = helper.initialBlogs.map((blog) => new Blog(blog))
+    const promises = blogObjects.map((blog) => blog.save())
 
     await User.deleteMany({})
 
     const testuser = {
-        username: "Jake",
-        password: "123546568",
-        name: "Jake Watson"
+        username: 'Jake',
+        password: '123546568',
+        name: 'Jake Watson',
     }
 
     await api.post('/api/users').send(testuser)
 
-    const loginResponse = await api.post('/api/login').send({ username: testuser.username, password: testuser.password })
+    const loginResponse = await api
+        .post('/api/login')
+        .send({ username: testuser.username, password: testuser.password })
 
-    auth_TOKEN = "Bearer " + loginResponse.body.token
+    auth_TOKEN = 'Bearer ' + loginResponse.body.token
 
     await Promise.all(promises)
 })
@@ -40,13 +42,12 @@ describe('GETTING ENTRIES', () => {
             .expect('Content-Type', /application\/json/)
     })
 
-    test("entry id is without _", async () => {
+    test('entry id is without _', async () => {
         const response = await api.get('/api/blogs')
         for (let i = 0; i < helper.initialBlogs.length; i++) {
             expect(response.body[i].id).toBeDefined()
         }
     })
-
 
     test('expect correct number of blog entries', async () => {
         const response = await api.get('/api/blogs')
@@ -57,19 +58,18 @@ describe('GETTING ENTRIES', () => {
     test('the first blog title is correct', async () => {
         const response = await api.get('/api/blogs')
 
-        const titles = response.body.map(r => r.title)
+        const titles = response.body.map((r) => r.title)
         expect(titles).toContain(helper.initialBlogs[0].title)
     })
 })
 
-
 describe('ADDING ENTRIES', () => {
     test('we can add blog entries', async () => {
         const newBlog = {
-            title: "cool new entry",
-            author: "test suite",
-            url: "please",
-            likes: 69
+            title: 'cool new entry',
+            author: 'test suite',
+            url: 'please',
+            likes: 69,
         }
 
         await api
@@ -80,7 +80,7 @@ describe('ADDING ENTRIES', () => {
             .expect('Content-Type', /application\/json/)
 
         const response = await api.get('/api/blogs')
-        const titles = response.body.map(r => r.title)
+        const titles = response.body.map((r) => r.title)
 
         expect(response.body).toHaveLength(helper.initialBlogs.length + 1)
         expect(titles).toContain(newBlog.title)
@@ -88,15 +88,15 @@ describe('ADDING ENTRIES', () => {
 
     test('blog without title or content is not added', async () => {
         const noTitle = {
-            content: "some content",
-            url: "someurl",
-            likes: 0
+            content: 'some content',
+            url: 'someurl',
+            likes: 0,
         }
 
         const noAuthor = {
-            author: "some author",
-            url: "someurl",
-            likes: 0
+            author: 'some author',
+            url: 'someurl',
+            likes: 0,
         }
 
         await api
@@ -118,9 +118,9 @@ describe('ADDING ENTRIES', () => {
 
     test('blog without likes property can be added and it automatically set to zero', async () => {
         const newBlog = {
-            title: "testinglikes",
-            author: "likeable person",
-            url: "likeme"
+            title: 'testinglikes',
+            author: 'likeable person',
+            url: 'likeme',
         }
 
         const response = await api
@@ -133,15 +133,12 @@ describe('ADDING ENTRIES', () => {
     })
 })
 
-
 describe('DELETING AND MODIFYING', () => {
     test('we can delete blog entries', async () => {
-        await api
-            .delete(`/api/blogs/${helper.initialBlogs[0]._id}`)
-            .expect(204)
+        await api.delete(`/api/blogs/${helper.initialBlogs[0]._id}`).expect(204)
 
         const response = await api.get('/api/blogs')
-        const titles = response.body.map(r => r.title)
+        const titles = response.body.map((r) => r.title)
 
         expect(response.body).toHaveLength(helper.initialBlogs.length - 1)
         expect(titles).not.toContain(helper.initialBlogs[0].title)
@@ -149,10 +146,10 @@ describe('DELETING AND MODIFYING', () => {
 
     test('we can update entries', async () => {
         const update = {
-            title: "updatedenr",
-            author: "jest",
+            title: 'updatedenr',
+            author: 'jest',
             likes: 1337,
-            url: "testurlll"
+            url: 'testurlll',
         }
 
         const putResponse = await api
@@ -165,8 +162,9 @@ describe('DELETING AND MODIFYING', () => {
         expect(putResponse.body.likes).toBe(update.likes)
         expect(putResponse.body.url).toBe(update.url)
 
-        const getResponse = await api
-            .get(`/api/blogs/${helper.initialBlogs[1]._id}`)
+        const getResponse = await api.get(
+            `/api/blogs/${helper.initialBlogs[1]._id}`
+        )
 
         expect(getResponse.body.title).toBe(update.title)
         expect(getResponse.body.author).toBe(update.author)
@@ -174,9 +172,6 @@ describe('DELETING AND MODIFYING', () => {
         expect(getResponse.body.url).toBe(update.url)
     })
 })
-
-
-
 
 afterAll(() => {
     mongoose.connection.close()

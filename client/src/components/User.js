@@ -4,7 +4,7 @@ import { useRouteMatch, Link } from 'react-router-dom'
 import Style from './GenericStyles'
 
 const User = (props) => {
-    if (props.userList.length < 1) {
+    if (props.userList.length < 1 || !props.user) {
         return null
     }
     const match = useRouteMatch('/users/:id')
@@ -15,7 +15,11 @@ const User = (props) => {
             <div className={Style.ClickableListContaier}>
                 {user.entries.map((blog) => {
                     return (
-                        <Link className={Style.ClickableListItem} key={blog.id} to={'/blogs/' + blog.id}>
+                        <Link
+                            className={Style.ClickableListItem}
+                            key={blog.id}
+                            to={'/blogs/' + blog.id}
+                        >
                             <p>{blog.title}</p>
                         </Link>
                     )
@@ -28,6 +32,7 @@ const User = (props) => {
 const mapStateToProps = (state) => {
     return {
         userList: state.userList,
+        user: state.user,
     }
 }
 

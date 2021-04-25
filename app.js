@@ -1,6 +1,7 @@
 const config = require('./utils/config')
 const express = require('express')
 require('express-async-errors')
+const chokidar = require('chokidar')
 const app = express()
 const cors = require('cors')
 const blogRouter = require('./controllers/blogs')
@@ -28,9 +29,8 @@ mongoose
     })
 
 app.use(cors())
-app.use(express.static('build'))
 app.use(express.json())
-app.use(middleware.requestLogger)
+//app.use(middleware.requestLogger)
 app.use(middleware.tokenExtractor)
 app.use('/api/blogs', middleware.userExtractor, blogRouter)
 
@@ -38,14 +38,25 @@ app.use('/api/blogs', blogRouter)
 app.use('/api/users', usersRouter)
 app.use('/api/login', loginRouter)
 
-const inProduction = process.env.NODE_ENV === 'production'
-if (!inProduction) {
-    /* eslint-disable */
+app.use('/api', (req, res, next) => require('@root/server')(req, res, next)) // eslint-disable-line
+
+const watcher = chokidar.watch('server') // Watch server folder
+watcher.on('ready', () => {
+    watcher.on('all', () => {
+        Object.keys(require.cache).forEach((id) => {
+            if (id.includes('server')) delete require.cache[id] // Delete all require caches that point to server folder (*)
+        })
+    })
+})
+
+if (
+    !process.env.NODE_ENV === 'production' ||
+    !process.env.NODE_ENV === 'test'
+) {
     const webpack = require('webpack')
     const middleware = require('webpack-dev-middleware')
     const hotMiddleWare = require('webpack-hot-middleware')
     const webpackConf = require('./webpack.config')
-    /* eslint-enable */
     const compiler = webpack(
         webpackConf('development', { mode: 'development' })
     )
@@ -55,9 +66,10 @@ if (!inProduction) {
     app.use(hotMiddleWare(compiler))
     app.use('*', (req, res, next) => {
         const filename = path.join(compiler.outputPath, 'index.html')
+        console.log(filename)
+        console.log('universal get')
         devMiddleware.waitUntilValid(() => {
             compiler.outputFileSystem.readFile(filename, (err, result) => {
-                console.log(filename)
                 if (err) return next(err)
                 res.set('content-type', 'text/html')
                 res.send(result)
@@ -66,11 +78,18 @@ if (!inProduction) {
         })
     })
 } else {
+    console.log('staring production mode')
     const DIST_PATH = path.resolve(__dirname, './dist')
     const INDEX_PATH = path.resolve(DIST_PATH, 'index.html')
 
-    app.use(express.static(DIST_PATH))
-    app.get('*', (req, res) => res.sendFile(INDEX_PATH))
+    app.use('/', express.static(DIST_PATH))
+    app.use('/blogs', express.static(DIST_PATH))
+    app.use('/users', express.static(DIST_PATH))
+    app.get('*', (req, res) => {
+        console.log(req.url)
+        console.log('universal get')
+        res.sendFile(INDEX_PATH)
+    })
 }
 
 if (process.env.NODE_ENV === 'test') {

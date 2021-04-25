@@ -1,5 +1,5 @@
 module.exports = (api) => {
-    api.cache(false);
+    api.cache(false)
 
     const presets = [
         [
@@ -9,9 +9,12 @@ module.exports = (api) => {
             },
         ],
         '@babel/preset-react',
-    ];
+    ]
+
+    const plugins = ['@babel/plugin-transform-runtime']
 
     return {
         presets,
-    };
-};
+        plugins,
+    }
+}
