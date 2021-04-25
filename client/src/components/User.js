@@ -1,10 +1,13 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { useRouteMatch, Link } from 'react-router-dom'
+import { useRouteMatch, Link, Redirect } from 'react-router-dom'
 import Style from './GenericStyles'
 
 const User = (props) => {
-    if (props.userList.length < 1 || !props.user) {
+    if (!props.user) {
+        return <Redirect to="/login" />
+    }
+    if (props.userList.length < 1) {
         return null
     }
     const match = useRouteMatch('/users/:id')

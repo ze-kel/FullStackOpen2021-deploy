@@ -1,13 +1,13 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { Link, Redirect } from 'react-router-dom'
 import BlogForm from './BlogForm'
 import Togglable from './Togglable'
 import Style from './GenericStyles'
 
 const BlogList = (props) => {
     if (!props.user) {
-        return null
+        return <Redirect to="/login" />
     }
     return (
         <div>

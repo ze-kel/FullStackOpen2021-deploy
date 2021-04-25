@@ -1,32 +1,32 @@
 import React, { useState } from 'react'
-import { setUser } from '../reducers/userReducer'
 import { connect } from 'react-redux'
-import loginService from '../services/login'
+import userListService from '../services/userList'
 import { setNotification } from '../reducers/notificationReducer'
 import Style from './GenericStyles'
 import { Redirect } from 'react-router'
 
-const LoginForm = (props) => {
+const RegisterForm = (props) => {
     if (props.user) {
         return <Redirect to="/" />
     }
 
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
+    const [name, setName] = useState('')
 
     const handleSubmit = async (e) => {
         e.preventDefault()
         try {
-            const user = await loginService.login({
+            await userListService.create({
                 username,
                 password,
+                name,
             })
-            props.setUser(user)
             setUsername('')
             setPassword('')
-            props.setNotification('You are logged in!')
+            setName('')
+            props.setNotification('User created. You can now login.')
         } catch (e) {
-            console.log(e.response)
             if (e.response.data.message) {
                 props.setNotification(e.response.data.message)
             }
@@ -35,8 +35,19 @@ const LoginForm = (props) => {
     }
     return (
         <div>
-            <h2 className="text-4xl">Login to app</h2>
+            <h2 className="text-4xl">Register</h2>
             <form className="my-4" onSubmit={handleSubmit}>
+                <div>
+                    <p className="my-1">Full Name</p>
+                    <input
+                        className={Style.Form}
+                        type="text"
+                        value={name}
+                        name="Full Name"
+                        id="nmae"
+                        onChange={(event) => setName(event.target.value)}
+                    />
+                </div>
                 <div>
                     <p className="my-1">Username</p>
                     <input
@@ -64,7 +75,7 @@ const LoginForm = (props) => {
                     type="submit"
                     id="loginbutton"
                 >
-                    Login
+                    Register
                 </button>
             </form>
         </div>
@@ -78,13 +89,12 @@ const mapStateToProps = (state) => {
 }
 
 const mapDispatchToProps = {
-    setUser,
     setNotification,
 }
 
-const connectedLoginForm = connect(
+const connectedRegisterForm = connect(
     mapStateToProps,
     mapDispatchToProps
-)(LoginForm)
+)(RegisterForm)
 
-export default connectedLoginForm
+export default connectedRegisterForm
