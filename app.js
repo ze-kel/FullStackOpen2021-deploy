@@ -38,7 +38,7 @@ app.use('/api/blogs', blogRouter)
 app.use('/api/users', usersRouter)
 app.use('/api/login', loginRouter)
 
-const inProduction = true
+const inProduction = process.env.NODE_ENV === 'production'
 if (!inProduction) {
     /* eslint-disable */
     const webpack = require('webpack')
