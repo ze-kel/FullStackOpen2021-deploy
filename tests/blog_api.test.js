@@ -9,11 +9,13 @@ const helper = require('./test.helper')
 
 let auth_TOKEN
 
-beforeEach(async () => {
+beforeEach(async (done) => {
     await Blog.deleteMany({})
 
     const blogObjects = helper.initialBlogs.map((blog) => new Blog(blog))
     const promises = blogObjects.map((blog) => blog.save())
+
+    await Promise.all(promises)
 
     await User.deleteMany({})
 
@@ -30,8 +32,7 @@ beforeEach(async () => {
         .send({ username: testuser.username, password: testuser.password })
 
     auth_TOKEN = 'Bearer ' + loginResponse.body.token
-
-    await Promise.all(promises)
+    done()
 })
 
 describe('GETTING ENTRIES', () => {
@@ -173,7 +174,7 @@ describe('DELETING AND MODIFYING', () => {
     })
 })
 
-afterAll((done) => {
-    mongoose.connection.close()
+afterAll(async (done) => {
+    await mongoose.connection.close()
     done()
 })

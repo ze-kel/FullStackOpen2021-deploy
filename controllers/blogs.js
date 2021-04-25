@@ -6,7 +6,6 @@ blogsRouter.get('/', async (request, response) => {
     const blogs = await Blog.find({})
         .populate('user', { username: 1, id: 1, name: 1 })
         .populate('comments', { comment: 1, id: 1 })
-    //const blogs = await Blog.find({}).populate('comments', { comment: 1, id: 1 })
     response.json(blogs)
 })
 
@@ -64,7 +63,7 @@ blogsRouter.delete('/:id', async (request, response) => {
 
     if (
         !requestedBlog.user ||
-        requestedBlog.user.toString() == requestingUser._id.toString()
+        requestedBlog.user.toString() === requestingUser._id.toString()
     ) {
         await Blog.findByIdAndRemove(request.params.id)
         response.status(204).end()
