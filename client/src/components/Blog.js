@@ -1,12 +1,15 @@
 import React, { useState } from 'react'
 import { connect } from 'react-redux'
 import { addLike, deleteBlog, addComment } from '../reducers/blogsReducer'
-import { useRouteMatch, Link, useHistory } from 'react-router-dom'
+import { useRouteMatch, Link, useHistory, Redirect } from 'react-router-dom'
 import { setNotification } from '../reducers/notificationReducer'
 import Style from './GenericStyles'
 
 const Blog = (props) => {
-    if (!props.user || props.blogs.length < 1) {
+    if (!props.user) {
+        return <Redirect to="/login" />
+    }
+    if (props.blogs.length < 1) {
         return null
     }
     const match = useRouteMatch('/blogs/:id')
@@ -50,7 +53,10 @@ const Blog = (props) => {
                 <p className="mt-1">Added by {blog.user.name}</p>{' '}
             </Link>
             <p className="text-xl mt-2 likescount">{'Likes: ' + blog.likes}</p>
-            <button className={Style.Button + ' mt-2'} onClick={() => props.addLike(blog)}>
+            <button
+                className={Style.Button + ' mt-2'}
+                onClick={() => props.addLike(blog)}
+            >
                 Like
             </button>
             {blog.user.username === props.user.username ? (
@@ -61,8 +67,15 @@ const Blog = (props) => {
                 ''
             )}
             <h4 className="text-3xl mt-4 mb-2">Comments</h4>
-            <input className={Style.Form + ' mt-2'} value={newComment} onChange={handleCommentInputChange}></input>
-            <button className={Style.Button + ' '} onClick={() => submitComment()}>
+            <input
+                className={Style.Form + ' mt-2'}
+                value={newComment}
+                onChange={handleCommentInputChange}
+            ></input>
+            <button
+                className={Style.Button + ' '}
+                onClick={() => submitComment()}
+            >
                 Add comment
             </button>
             <div className={Style.ClickableListContaier + ' mt-3'}>

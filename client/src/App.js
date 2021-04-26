@@ -16,6 +16,8 @@ import {
 import UserList from './components/UserList'
 import Blog from './components/Blog'
 import User from './components/User'
+import RegisterForm from './components/RegisterForm'
+
 import 'tailwindcss/tailwind.css'
 
 const App = () => {
@@ -30,8 +32,13 @@ const App = () => {
             <Menu />
             <div className="max-w-2xl m-auto">
                 <Notification />
-                <LoginForm />
                 <Switch>
+                    <Route path="/login">
+                        <LoginForm />
+                    </Route>
+                    <Route path="/register">
+                        <RegisterForm />
+                    </Route>
                     <Route path="/blogs/:id">
                         <Blog />
                     </Route>

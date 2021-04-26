@@ -53,10 +53,7 @@ watcher.on('ready', () => {
     })
 })
 
-if (
-    !process.env.NODE_ENV === 'production' ||
-    !process.env.NODE_ENV === 'test'
-) {
+if (process.env.NODE_ENV === 'dev') {
     console.log('Starting hot reload mode')
     const webpack = require('webpack')
     const middleware = require('webpack-dev-middleware')

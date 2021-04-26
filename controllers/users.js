@@ -13,12 +13,14 @@ usersRouter.get('/', async (request, response) => {
 })
 
 usersRouter.post('/', async (request, response) => {
+    console.log('CREATING USER')
     const body = request.body
+    console.log(body)
 
     if (!body.username || !body.password) {
         response
             .status(400)
-            .send({ message: 'Must provide both username and password' })
+            .send({ message: 'Both username and password required' })
     }
     if (body.username.length < 3) {
         response.status(400).send({ message: 'Username too short' })
