@@ -13,9 +13,7 @@ usersRouter.get('/', async (request, response) => {
 })
 
 usersRouter.post('/', async (request, response) => {
-    console.log('CREATING USER')
     const body = request.body
-    console.log(body)
 
     if (!body.username || !body.password) {
         response
